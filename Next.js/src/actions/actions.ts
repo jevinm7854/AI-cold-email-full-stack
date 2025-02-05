@@ -4,7 +4,8 @@ import { chromaClient } from "@/lib/chromaDbConnect";
 import { log } from "console";
 import { z } from "zod";
 import { ZodIssue } from "zod";
-import { embed } from "chromadb-default-embed";
+import axios from "axios"
+
 
 type AddProfileResult =
   | { success: true; message: string }
@@ -43,24 +44,8 @@ export async function addProfile(
 
     console.log("Validated Data:", validatedData);
 
-    const collection = await chromaClient.getOrCreateCollection({
-      name: name,
-    });
-
-    await collection.upsert({
-      documents: [
-        "This is a document about pineapple",
-        "This is a document about oranges",
-      ],
-      ids: ["id1", "id2"],
-    });
-
-    const results = await collection.query({
-      queryTexts: "This is a query document about citrus fruit", // Chroma will embed this for you
-      nResults: 2, // how many results to return
-    });
-
-    console.log(results);
+    const resp= await axios.post("http://localhost:8000/profile", validatedData)
+    console.log(resp)
 
     return { success: true, message: "Profile added successfully!" };
   } catch (error) {

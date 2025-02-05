@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   postgres:
     image: postgres:latest
@@ -10,5 +12,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  chroma:
+    image: chromadb/chroma:latest
+    container_name: chroma_container
+    restart: always
+    ports:
+      - "8432:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+
 volumes:
   postgres_data:
+  chroma_data:

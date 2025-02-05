@@ -13,8 +13,9 @@ all: db-up start
 # Start PostgreSQL container
 db-up:
 	docker-compose -f $(COMPOSE_FILE) up -d
-	@echo "Waiting for PostgreSQL to be ready..."
+	@echo "Waiting for PostgreSQL and ChromaDB to be ready..."
 	@sleep $(DB_READY_TIMEOUT)
+	@echo "Docker containers up and ready"
 
 # Stop PostgreSQL container
 db-down:
@@ -23,7 +24,12 @@ db-down:
 # Start FastAPI application locally
 start:
 	@echo "Activating virtual environment and starting FastAPI application..."
-	@bash -c "source $(VENV_ACTIVATE) && fastapi dev main.py"
+	@bash -c "source $(VENV_ACTIVATE) && rm -rf chroma_db && fastapi dev main.py"
+
+
+
+clean: db-down 
+	@bash -c "rm -rf chroma_db"
 
 # View database logs
 db-logs:
@@ -32,8 +38,8 @@ db-logs:
 # Help
 help:
 	@echo "Available targets:"
-	@echo "  db-up    - Start PostgreSQL container"
-	@echo "  db-down  - Stop PostgreSQL container"
+	@echo "  db-up    - Start PostgreSQL and ChromaDB containers"
+	@echo "  db-down  - Stop PostgreSQL and ChromaDB containers"
 	@echo "  start    - Start FastAPI application locally"
 	@echo "  db-logs  - View database container logs"
 	@echo "  all      - Start database and application (default)"
