@@ -4,13 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { addProfile } from "@/actions/actions";
+import { addProfile } from "@/actions/addProfile-actions";
 import { string, ZodIssue } from "zod";
 import { resourceLimits } from "worker_threads";
 import { error } from "console";
+import Link from "next/link";
+import { UUID } from "crypto";
+import { useRouter } from "next/navigation";
 
 type AddProfileResult =
-  | { success: true; message: string }
+  | { success: true; message: string; id: UUID }
   | { success: false; errors: ZodIssue[] | string };
 
 interface Project {
@@ -28,6 +31,7 @@ export default function Profile() {
   ]);
 
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleAddProject = () => {
     setProjects([
@@ -63,9 +67,11 @@ export default function Profile() {
     formData.append("projects", JSON.stringify(projects)); // Serialize array
 
     const result: AddProfileResult = await addProfile(formData);
-
+    console.log(result);
     if (result.success) {
       toast({ description: result.message });
+      // Link({ href: `/profile/${result.id}` });
+      router.push(`/profile/${result.id}`);
     } else {
       if (typeof result.errors === "string") {
         toast({

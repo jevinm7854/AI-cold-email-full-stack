@@ -1,14 +1,12 @@
 "use server";
 
-import { chromaClient } from "@/lib/chromaDbConnect";
-import { log } from "console";
 import { z } from "zod";
 import { ZodIssue } from "zod";
-import axios from "axios"
-
+import axios from "axios";
+import { UUID } from "crypto";
 
 type AddProfileResult =
-  | { success: true; message: string }
+  | { success: true; message: string; id: UUID }
   | { success: false; errors: ZodIssue[] | string };
 
 // Define the schema using Zod
@@ -33,7 +31,7 @@ export async function addProfile(
     const email = formdata.get("email") as string;
     const background = formdata.get("background") as string;
     const projects = JSON.parse(formdata.get("projects") as string);
-    console.log("*********** ", projects);
+
     // Validate the extracted data
     const validatedData = profileSchema.parse({
       name,
@@ -44,16 +42,25 @@ export async function addProfile(
 
     console.log("Validated Data:", validatedData);
 
-    const resp= await axios.post("http://localhost:8000/profile", validatedData)
-    console.log(resp)
-
-    return { success: true, message: "Profile added successfully!" };
-  } catch (error) {
+    const resp = await axios.post(
+      `${process.env.BACKEND_URL}/api/users/signup`,
+      validatedData
+    );
+    console.log("Response:", resp);
+    if (resp.status === 201) {
+      return {
+        success: true,
+        id: resp.data.id,
+        message: "Profile added successfully!",
+      };
+    } else {
+      throw new Error("Failed to add profile");
+    }
+  } catch (error: any) {
     if (error instanceof z.ZodError) {
-      console.error("Validation errors:", error.errors);
       return { success: false, errors: error.errors };
     }
-    console.error("Unexpected error:", error);
-    return { success: false, errors: "Something went wrong" };
+
+    return { success: false, errors: error.message || "Something went wrong" };
   }
 }

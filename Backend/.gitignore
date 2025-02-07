@@ -136,6 +136,8 @@ ENV/
 env.bak/
 venv.bak/
 
+.idea
+
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -173,4 +175,5 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-chroma_db
+# in Memory ChromaDB
+chromaDB
