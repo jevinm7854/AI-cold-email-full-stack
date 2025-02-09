@@ -1,4 +1,4 @@
-from flask_mysqldb import MySQL
+from flask_mysqldb import MySQL # type: ignore
 import chromadb
 from .logger import logger
 
