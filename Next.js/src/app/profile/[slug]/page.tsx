@@ -12,7 +12,7 @@ export default async function Page({
     <>
       {/* <div>the slug is : {slug}</div> */}
       <div className="flex justify-center text-2xl mt-5">Generate Email:</div>
-      <UrlForm />
+      <UrlForm slug={slug}  />
     </>
   );
 }

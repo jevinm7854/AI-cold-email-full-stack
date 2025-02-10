@@ -1,7 +1,7 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify # type: ignore
 import uuid
 from ...config.logger import logger
-from ..services.userService import createUserDB, createUserChroma
+from ..services.userService import createUserDB, createUserChroma, getUserDetails
 
 users_bp = Blueprint("users", __name__)
 
@@ -18,10 +18,11 @@ def users():
         name = data.get("name")
         email = data.get("email")
         background = data.get("background")
+        technicalSkills = data.get("technicalSkills")
         id = uuid.uuid4()
 
         # Create user in the database
-        responseDB = createUserDB(name, email, id, background)
+        responseDB = createUserDB(name, email, id, background, technicalSkills)
         if "error" in responseDB:
             logger.error(f"Error creating user in DB: {responseDB['error']}")
             return jsonify({"error": "Failed to create user in database"}), 500
@@ -39,3 +40,15 @@ def users():
     except Exception as e:
         logger.error(f"Error during user signup: {e}", exc_info=True)
         return jsonify({"error": "Internal Server Error"}), 500
+
+# @users_bp.route("/getUserDetails/<id>", methods=["GET"])
+# def get_user_details(id):
+#     try:
+#         user = getUserDetails(id)
+#         if user:
+#             return jsonify(user), 200
+#         else:
+#             return jsonify({"error": "User not found"}), 404
+#     except Exception as e:
+#         logger.error(f"Error retrieving user details: {e}", exc_info=True)
+#         return jsonify({"error": "Internal Server Error"}), 500

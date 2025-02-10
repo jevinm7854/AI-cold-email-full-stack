@@ -11,10 +11,13 @@ import { Clipboard } from "lucide-react";
 import { toast, useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 
-export default function UrlForm() {
+export default function UrlForm({ slug }: { slug: string }) {
   const [genEmail, setGenEmail] = useState<string | null>(null);
   const [url, setUrl] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const id = slug;
 
   const copyToClipboard = (type: string, text: string) => {
     navigator.clipboard.writeText(text);
@@ -37,12 +40,18 @@ export default function UrlForm() {
     // setUrl(null); // Clear previous results
 
     setTimeout(async () => {
-      const response = await submitUrl(formData.get("url") as string);
+      const response = await submitUrl(
+        formData.get("url") as string,
+        id as string
+      );
       const email = response.generatedEmail;
       const url = response.url;
+      const message = response.message;
+      setMessage(message);
       setGenEmail(email);
       setUrl(url);
       setLoading(false); // Stop loading
+      toast({ title: message });
     }, 1); // Slight delay to trigger UI update
   };
 

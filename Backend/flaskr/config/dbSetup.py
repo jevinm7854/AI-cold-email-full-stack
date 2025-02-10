@@ -36,6 +36,7 @@ def create_users_table(mysql):
                 name VARCHAR(100),
                 email VARCHAR(100),
                 background TEXT,
+                technicalSkills TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """

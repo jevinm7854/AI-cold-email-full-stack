@@ -14,6 +14,7 @@ const profileSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email format"),
   background: z.string().min(1, "Background is required"),
+  technicalSkills: z.string().min(1, "Technical Skills is required"),
   projects: z.array(
     z.object({
       description: z.string().min(1, "Project description is required"),
@@ -30,6 +31,7 @@ export async function addProfile(
     const name = formdata.get("name") as string;
     const email = formdata.get("email") as string;
     const background = formdata.get("background") as string;
+    const technicalSkills = formdata.get("technicalSkills") as string;
     const projects = JSON.parse(formdata.get("projects") as string);
 
     // Validate the extracted data
@@ -37,6 +39,7 @@ export async function addProfile(
       name,
       email,
       background,
+      technicalSkills,
       projects,
     });
 

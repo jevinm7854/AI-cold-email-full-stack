@@ -26,6 +26,7 @@ export default function Profile() {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [background, setBackground] = useState<string>("");
+  const [technicalSkills, setTechnicalSkills] = useState<string>("");
   const [projects, setProjects] = useState<Project[]>([
     { description: "", techStack: "", portfolio: "" },
   ]);
@@ -64,6 +65,7 @@ export default function Profile() {
     formData.append("name", name);
     formData.append("email", email);
     formData.append("background", background);
+    formData.append("technicalSkills", technicalSkills);
     formData.append("projects", JSON.stringify(projects)); // Serialize array
 
     const result: AddProfileResult = await addProfile(formData);
@@ -126,6 +128,16 @@ export default function Profile() {
           />
         </div>
 
+        <div>
+          <Textarea
+            value={technicalSkills}
+            onChange={(e) => setTechnicalSkills(e.target.value)}
+            required
+            placeholder="Technical Skills (e.g., Java, Python, Numpy, MongoDB, LangChain, etc)"
+            name="technicalSkills"
+          />
+        </div>
+
         {/* Dynamic Project Fields */}
         {projects.map((project, index) => (
           <div key={index} className="p-4 border rounded-md space-y-2">
@@ -159,7 +171,7 @@ export default function Profile() {
                   handleChange(index, "techStack", e.target.value)
                 }
                 required
-                placeholder="Tech Stack (e.g., React, Python, C++)"
+                placeholder="Tech Stack (e.g., TypeScript, C++, Prisma, etc)"
                 name="techStack"
               />
             </div>

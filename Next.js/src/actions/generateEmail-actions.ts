@@ -3,20 +3,28 @@ import axios from "axios";
 import { z } from "zod";
 
 const jobUrlSchema = z.string().url();
+const idSchema = z.string().min(1);
 
-export async function submitUrl(jobUrl: string) {
+export async function submitUrl(jobUrl: string, id: string) {
   try {
     const ValiadtedUrl = jobUrlSchema.parse(jobUrl);
+    const ValidatedId = idSchema.parse(id);
     const resp = await axios.post(
       `${process.env.BACKEND_URL}/api/email/generate`,
-      { url: ValiadtedUrl }
+      { url: ValiadtedUrl, id: ValidatedId }
     );
     const generatedEmail = resp.data.email;
-    return { generatedEmail: generatedEmail, url: ValiadtedUrl };
-  } catch (error) {
+    const message = resp.data.message;
+    return {
+      generatedEmail: generatedEmail,
+      url: ValiadtedUrl,
+      message: message,
+    };
+  } catch (error: any) {
     return {
       generatedEmail: "Failed to generate Email ",
-      url: "Please try again later",
+      url: jobUrl || " ",
+      message: error.message || "Failed to generate Email ",
     };
   }
 }
